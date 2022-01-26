@@ -48,5 +48,33 @@ namespace FlowersSpot.Areas.Admin.Controllers
         //Metoda GET admin/pages/create
         public IActionResult Create() => View();
 
+        //Metoda POST admin/pages/create
+        [HttpPost]
+        public async Task<IActionResult> Create(Page page)
+        {
+            if (ModelState.IsValid)
+            {
+                page.Slug = page.Title.ToLower().Replace(" ", "-");
+                page.Sorting = 100;
+
+                var slug = await context.Pages.FirstOrDefaultAsync(x => x.Slug == page.Slug);
+                if (slug != null)
+                {
+                    ModelState.AddModelError("", "The title already exists.");
+                    return View(page);
+
+                }
+
+                context.Add(page);
+                await context.SaveChangesAsync();
+
+                TempData["Success"] = "The page has been created.";
+
+                return RedirectToAction("Index");
+            }
+
+            return View(page);
+        }
+
     }
 }
