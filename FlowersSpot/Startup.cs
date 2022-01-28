@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FlowersSpot.Infrastructure;
+using FlowersSpot.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace FlowersSpot
@@ -30,6 +32,14 @@ namespace FlowersSpot
             services.AddControllersWithViews();
 
             services.AddDbContext<FlowersSpotContext>(options => options.UseSqlServer(Configuration.GetConnectionString("FlowersSpotContext")));
+
+            services.AddIdentity<AppUser, IdentityRole>(options =>
+                {
+                    options.Password.RequiredLength = 4;
+                })
+                .AddEntityFrameworkStores<FlowersSpotContext>()
+                .AddDefaultTokenProviders();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,20 +62,24 @@ namespace FlowersSpot
 
             app.UseSession();
 
+
+            app.UseAuthentication();
             app.UseAuthorization();
+            
+
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     "pages",
                     "{slug?}",
-                    defaults: new { controller = "Pages", action = "Page"}
-                ); 
-                
+                    defaults: new { controller = "Pages", action = "Page" }
+                );
+
                 endpoints.MapControllerRoute(
                     "products",
                     "products/{categorySlug}",
-                    defaults: new { controller = "Products", action = "ProductsByCategory"}
+                    defaults: new { controller = "Products", action = "ProductsByCategory" }
                 );
 
                 endpoints.MapControllerRoute(

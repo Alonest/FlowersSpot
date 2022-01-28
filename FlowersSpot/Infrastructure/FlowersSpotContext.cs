@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FlowersSpot.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace FlowersSpot.Infrastructure
 {
-    public class FlowersSpotContext : DbContext
+    public class FlowersSpotContext : IdentityDbContext<AppUser>
     {
         public FlowersSpotContext(DbContextOptions<FlowersSpotContext>options) :base(options)
         {
